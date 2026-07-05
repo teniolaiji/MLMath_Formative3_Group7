@@ -193,7 +193,10 @@ J(m,b) = (1/n) × Σ(ŷ - y)²
 where ŷ = X·m + b
 
 ## Chain Rule Derivatives
-[MEMBER 3: INSERT MY DERIVATION STEPS]
+
+<img width="183" height="251" alt="image" src="https://github.com/user-attachments/assets/c2b7f3b3-62f0-42a9-bc94-437d22f09767" /> <img width="186" height="275" alt="image" src="https://github.com/user-attachments/assets/dda88f23-75f8-42db-9101-4c8571403103" />
+
+
 
 ## Derivative with respect to m:
 ∂J/∂m = (2/n) × Xᵀ × (ŷ - y)
