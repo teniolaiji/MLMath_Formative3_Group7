@@ -2,10 +2,10 @@
 ## Team Presentation Guide
 
 **Team Members:**
-- Saad 
-- Towi
-- Diane 
-- Esther
+- Oluwaloseyitowi Iji 
+- Esther Mahoro
+- Diane Ingabire
+- Saad Byiringiro
 **Presentation Date:** Tuesday, 7 July 2026  
 **Time Slot:** 1:45pm   
 **Total Duration:** 15 minutes
@@ -16,9 +16,9 @@
 
 | Part | Topic | Speaker | Duration |
 |------|-------|---------|----------|
-| Part 1 | EM Algorithm & Probability Distributions | [Name] | 3 min |
-| Part 2 | Bayesian Probability | [Name] | 3 min |
-| Part 3 & 4 | Gradient Descent (Manual & Code) | [Name] | 7 min |
+| Part 1 | EM Algorithm & Probability Distributions | [] | 5 min |
+| Part 2 | Bayesian Probability | [Towi] | 3 min |
+| Part 3 & 4 | Gradient Descent (Manual & Code) | [Esther, Diane] | 7 min |
 
 ---
 
@@ -32,12 +32,13 @@ Cluster unlabeled height data from two populations (Parents vs. Children) using 
 
 **Answer:** Splitting at the global mean is fundamentally flawed because:
 
-1. **Ignores Variance:** It treats both distributions as having equal spread
-2. **Misclassification Risk:** Points in the overlapping region get incorrectly assigned
+1. **Truncation bias:** Cutting each group at the mean chops off the members that reach into the overlap, pushing the two estimated means artificially apart and shrinking both variances.
+2. **Misclassification Risk:** Points in the overlapping region get forced into one side even though they could belong to either.
 3. **Hard Assignments:** Forces binary classification instead of probabilistic reasoning
 4. **Suboptimal Parameters:** Doesn't account for the actual shape of each distribution
 
 **Solution:** Use EM algorithm with **soft assignments** (probabilistic responsibilities)
+
 
 ## Mathematical Foundation
 
@@ -56,6 +57,8 @@ P(x|μ,σ²) = (1/√(2πσ²)) * exp(-(x-μ)²/(2σ²))
 μ_k = Σ_i γ(i,k) * x_i / Σ_i γ(i,k)
 σ_k² = Σ_i γ(i,k) * (x_i - μ_k)² / Σ_i γ(i,k)
 π_k = Σ_i γ(i,k) / N
+
+**Convergence:** stop when the log-likelihood changes by less than a small tolerance.
 
 
 ##  Implementation Code
@@ -88,35 +91,69 @@ Main EM Loop:
 # PART 2: Bayesian Probability
 - Apply Bayes' Theorem to calculate sentiment probabilities from IMDb movie reviews using basic Python only (no ML libraries).
 ## Positive Sentiment Keywords:
-- [Keyword 1] - Justification: [Why this indicates positive sentiment]
-- [Keyword 2] - Justification: [Why this indicates positive sentiment]
-- [Keyword 3] - Justification: [Why this indicates positive sentiment]
-- [Keyword 4] - Justification: [Why this indicates positive sentiment]
+- [excellent] - Justification: [strong praise; appears overwhelmingly in positive reviews.]
+- [wonderful] - Justification: [expresses delight; rare in negative reviews]
+- [brilliant] - Justification: [high admiration for craft or performance]
+
 
 ## Negative Sentiment Keywords:
-- [Keyword 1] - Justification: [Why this indicates positive sentiment]
-- [Keyword 2] - Justification: [Why this indicates positive sentiment]
-- [Keyword 3] - Justification: [Why this indicates positive sentiment]
-- [Keyword 4] - Justification: [Why this indicates positive sentiment]
+- [worst] - Justification: [a serious complaint; strongly negative]
+- [boring] - Justification: [expresses disengagement; concentrated in negative reviews]
+- [waste] - Justification: [signals regret ("waste of time"); almost always negative.]
+
   
 #  Bayes' Theorem
 P(Positive|keyword) = P(keyword|Positive) × P(Positive) / P(keyword)
 
 ## Components:
-- Prior: P(Positive) = Base probability of positive reviews
-- Likelihood: P(keyword|Positive) = Probability of keyword given positive review
-- Marginal: P(keyword) = Total probability of keyword across all reviews
+- Prior: P(Positive): Base probability of positive reviews
+- Likelihood: P(keyword|Positive): how often positive reviews use the keyword
+- Marginal: P(keyword): how often the keyword appears overall
 - Posterior: P(Positive|keyword) = Updated probability after seeing keyword
 
+## Results
+ 
+| Keyword | Prior | Likelihood | Marginal | Posterior |
+|---------|-------|-----------|----------|-----------|
+| excellent | 0.500 | 0.1147 | 0.0710 | **0.8074** |
+| wonderful | 0.500 | 0.0903 | 0.0556 | **0.8122** |
+| brilliant | 0.500 | 0.0635 | 0.0418 | **0.7601** |
+| waste     | 0.500 | 0.0070 | 0.0507 | **0.0691** |
+| worst     | 0.500 | 0.0164 | 0.0887 | **0.0927** |
+| boring    | 0.500 | 0.0237 | 0.0610 | **0.1940** |
+
+**Interpretation:** positive keywords push the posterior toward ~0.8, negative
+keywords toward ~0.1, both starting from a neutral 0.5 prior. That swing away from 0.5 is Bayesian updating in action.
+
+ 
 # Implementation Code
-[MEMBER 2: INSERT YOUR PREPROCESSING CODE]
-#### [INSERT YOUR TEXT CLEANING AND TOKENIZATION CODE]
+
+#### [df = pd.read_csv("IMDB Dataset.csv", delimiter=",")
+df.head()]
 
 ## Counting Keywords
-[INSERT YOUR KEYWORD COUNTING LOGIC]
+[positive_keywords = ["excellent", "wonderful", "brilliant"]
+negative_keywords = ["waste", "worst", "boring"]
+
+total = len(df)
+is_pos = df["sentiment"] == "positive"
+positives = df[is_pos]
+is_neg = df["sentiment"] == "negative"
+negatives = df[is_neg]
+positives
+
+prior = len(positives) / total
+prior]
 
 ## Bayes' Theorem Implementation
-[MEMBER 2: INSERT YOUR BAYES CALCULATION CODE]
+[def bayes(keyword):
+    has_kw = df["review"].str.contains(rf"\b{keyword}\b", case=False, regex=True)
+
+  likelihood = (has_kw & is_pos).sum() / prior         # P(keyword | Positive)
+  marginal   = has_kw.sum()/len(df)                    # P(keyword)
+  posterior  = (likelihood * prior) / marginal         # P(Positive | keyword)
+
+  return prior, likelihood, marginal, posterior]
 
 # Probability Results Tables
 ### Positive Keywords Analysis
@@ -125,11 +162,6 @@ P(Positive|keyword) = P(keyword|Positive) × P(Positive) / P(keyword)
 ### Negative Keywords Analysis
 <img width="617" height="184" alt="image" src="https://github.com/user-attachments/assets/5bbf74a9-bad5-43dc-88d2-f9631d43a760" />
 
- ### Interpretation
-[MEMBER 2: INSERT YOUR ANALYSIS]
-
-### Visualization
-# [INSERT YOUR PLOTTING CODE and visual if any]
 
 ##  PART 3 & 4: Gradient Descent
 
