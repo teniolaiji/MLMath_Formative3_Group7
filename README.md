@@ -91,15 +91,15 @@ Main EM Loop:
 # PART 2: Bayesian Probability
 - Apply Bayes' Theorem to calculate sentiment probabilities from IMDb movie reviews using basic Python only (no ML libraries).
 ## Positive Sentiment Keywords:
-- [excellent] - Justification: [strong praise; appears overwhelmingly in positive reviews.]
-- [wonderful] - Justification: [expresses delight; rare in negative reviews]
-- [brilliant] - Justification: [high admiration for craft or performance]
+- **excellent** - Justification: strong praise; appears overwhelmingly in positive reviews
+- **wonderful** - Justification: expresses delight; rare in negative reviews
+- **brilliant** - Justification: high admiration for craft or performance
 
 
 ## Negative Sentiment Keywords:
-- [worst] - Justification: [a serious complaint; strongly negative]
-- [boring] - Justification: [expresses disengagement; concentrated in negative reviews]
-- [waste] - Justification: [signals regret ("waste of time"); almost always negative.]
+- **worst** - Justification: a serious complaint; strongly negative
+- **boring** - Justification: expresses disengagement; concentrated in negative reviews
+- **waste** - Justification: signals regret ("waste of time"); almost always negative.
 
   
 #  Bayes' Theorem
@@ -128,11 +128,15 @@ keywords toward ~0.1, both starting from a neutral 0.5 prior. That swing away fr
  
 # Implementation Code
 
-#### [df = pd.read_csv("IMDB Dataset.csv", delimiter=",")
+#### 
+```
+df = pd.read_csv("IMDB Dataset.csv", delimiter=",")
 df.head()]
+```
 
 ## Counting Keywords
-[positive_keywords = ["excellent", "wonderful", "brilliant"]
+```
+positive_keywords = ["excellent", "wonderful", "brilliant"]
 negative_keywords = ["waste", "worst", "boring"]
 
 total = len(df)
@@ -143,10 +147,12 @@ negatives = df[is_neg]
 positives
 
 prior = len(positives) / total
-prior]
+prior
+```
 
 ## Bayes' Theorem Implementation
-[def bayes(keyword):
+```
+def bayes(keyword):
     has_kw = df["review"].str.contains(rf"\b{keyword}\b", case=False, regex=True)
 
   likelihood = (has_kw & is_pos).sum() / prior         # P(keyword | Positive)
@@ -154,7 +160,7 @@ prior]
   posterior  = (likelihood * prior) / marginal         # P(Positive | keyword)
 
   return prior, likelihood, marginal, posterior]
-
+```
 # Probability Results Tables
 ### Positive Keywords Analysis
 <img width="617" height="184" alt="image" src="https://github.com/user-attachments/assets/05aa112e-fad4-43fe-98c5-6fa3f0bbeb54" />
@@ -301,7 +307,7 @@ cd formative-3
 pip install numpy scipy matplotlib
 
 ### Run notebook
-jupyter notebook notebook.ipynb
+jupyter notebook Assignment.ipynb
 
 
 
