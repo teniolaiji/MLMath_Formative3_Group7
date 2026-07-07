@@ -10,22 +10,20 @@
   
 **Presentation Date:** Tuesday, 7 July 2026  
 **Time Slot:** 1:45pm   
-**Total Duration:** 15 minutes
-
 ---
 
 ##  Presentation Overview
 
 | Part | Topic | Speaker | Duration |
 |------|-------|---------|----------|
-| Part 1 | EM Algorithm & Probability Distributions | [] | 5 min |
-| Part 2 | Bayesian Probability | [Towi] | 3 min |
-| Part 3 & 4 | Gradient Descent (Manual & Code) | [Esther, Diane] | 7 min |
+| Part 1 | EM Algorithm & Probability Distributions | Towi, Diane | 5 min |
+| Part 2 | Bayesian Probability | Towi | 3 min |
+| Part 3 & 4 | Gradient Descent (Manual & Code) | Esther, Diane | 7 min |
 
 ---
 
 #  PART 1: Expectation-Maximization (EM) Algorithm
-### Speaker: [Member Name] | Time: 0-5 minutes
+### Speaker: Towi & Diane | Time: 0-5 minutes
 
 ##  Objective
 Cluster unlabeled height data from two populations (Parents vs. Children) using a mixture of Gaussian distributions.
@@ -64,30 +62,93 @@ P(x|μ,σ²) = (1/√(2πσ²)) * exp(-(x-μ)²/(2σ²))
 
 
 ##  Implementation Code
+```
+fathers = df.drop_duplicates("family")["father"].dropna().to_numpy()
+children = df["childHeight"].dropna().to_numpy()
+x = np.concatenate([fathers, children])   
+```
+```
+def gaussian(x, mu, var):
+    """Height of the bell curve (mean mu, variance var) at point x."""
+    return np.exp(-(x - mu) ** 2 / (2 * var)) / np.sqrt(2 * np.pi * var)
+```
+```
+def log_likelihood(x, mu1, mu2, var1, var2, pi1, pi2):
+    """Total log-probability of the data under the current mixture.
+    This is the single score EM pushes UP every iteration."""
+    mixed = pi1 * gaussian(x, mu1, var1) + pi2 * gaussian(x, mu2, var2)
+    return np.sum(np.log(mixed))
+```
+```
+global_mean = x.mean()
+low = x[x < global_mean]     # everyone below the average -> pile 1
+high = x[x >= global_mean]  # everyone above the average -> pile 2
+```
+```
+mu1, mu2 = low.mean(), high.mean()
+var1, var2 = low.var(), high.var()
+pi1, pi2 = len(low) / N, len(high) / N
+```
+**E-step & M-step**:
+```
+def em(x, mu1, mu2, var1, var2, pi1, pi2, max_iters=500, tol=1e-6, verbose=True):
+    history = []
+ 
+    def record(it, ll):
+        history.append((it, mu1, mu2, var1, var2, pi1, pi2, ll))
+ 
+    ll = log_likelihood(x, mu1, mu2, var1, var2, pi1, pi2)
+    record(0, ll)
+    if verbose:
+        print(f"{'it':>3}{'mu1':>9}{'mu2':>9}{'var1':>9}{'var2':>9}{'pi1':>7}{'pi2':>7}{'LL':>11}")
+        print(f"{0:>3}{mu1:9.3f}{mu2:9.3f}{var1:9.3f}{var2:9.3f}{pi1:7.3f}{pi2:7.3f}{ll:11.2f}")
+ 
+    prev = ll
+    for it in range(1, max_iters + 1):
+        # ---- E-step: responsibilities (soft assignment) ----
+        r1 = pi1 * gaussian(x, mu1, var1)    # unnormalized pull toward comp 1
+        r2 = pi2 * gaussian(x, mu2, var2)    # unnormalized pull toward comp 2
+        total = r1 + r2
+        g1 = r1 / total                      # P(comp1 | height)
+        g2 = r2 / total                      # P(comp2 | height)
+ 
+        # ---- M-step: re-estimate each curve using the soft assignments ----
+        N1, N2 = g1.sum(), g2.sum()          # soft count
+        mu1 = (g1 * x).sum() / N1
+        mu2 = (g2 * x).sum() / N2
+        var1 = (g1 * (x - mu1) ** 2).sum() / N1
+        var2 = (g2 * (x - mu2) ** 2).sum() / N2
+        pi1, pi2 = N1 / N, N2 / N
+ 
+        ll = log_likelihood(x, mu1, mu2, var1, var2, pi1, pi2)
+        record(it, ll)
+        if verbose and it <= 2:              # print the first two updates for the table
+            print(f"{it:>3}{mu1:9.3f}{mu2:9.3f}{var1:9.3f}{var2:9.3f}{pi1:7.3f}{pi2:7.3f}{ll:11.2f}")
+ 
+        if abs(ll - prev) < tol:
+            break
+        prev = ll
+ 
+    params = dict(mu1=mu1, mu2=mu2, var1=var1, var2=var2, pi1=pi1, pi2=pi2)
+    return params, history, it
 
-### [MEMBER 1: INSERT YOUR CODE SNIPPETS HERE]
-
-**Initialization:**
-# [INSERT YOUR INITIALIZATION CODE]
-
-E-Step Function:
-<img width="620" height="86" alt="image" src="https://github.com/user-attachments/assets/493a994a-c87d-4b31-af93-963f48f9dab0" />
-
-M-Step Function:
-#### [INSERT YOUR M-STEP CODE]
-Main EM Loop:
-#### [INSERT YOUR MAIN LOOP CODE]
-
-## Optimization Tracking Table
-<img width="637" height="143" alt="image" src="https://github.com/user-attachments/assets/151c801b-ed52-4b16-8dd2-de33ec151dd6" />
+```
+```
+params, history, n_iters = em(x, mu1, mu2, var1, var2, pi1, pi2)
+```
+**Output- Optimization tracking Table**:
+<img width="230" height="47" alt="Screenshot 2026-07-07 131948" src="https://github.com/user-attachments/assets/0a100ed9-f6e1-455f-b861-69d69c0c415f" />
 
 # Visualizations
 ## Distribution Plot
 
-<img width="218" height="126" alt="image" src="https://github.com/user-attachments/assets/7fb588b3-a0cc-41ae-9a09-3bf8267d8bd0" />
+<img width="338" height="203" alt="Screenshot 2026-07-07 132324" src="https://github.com/user-attachments/assets/4c872da1-b2ae-45e7-bcee-9d5aab1369b4" />
+
 
 ## Convergence Plot
-<img width="218" height="126" alt="image" src="https://github.com/user-attachments/assets/e15e4228-58dc-44db-ab60-3d59b2c2dc4f" />
+
+<img width="341" height="203" alt="Screenshot 2026-07-07 132335" src="https://github.com/user-attachments/assets/6d7bf587-5a04-46d3-a9ca-4b6ff7398c67" />
+
 
 
 # PART 2: Bayesian Probability
@@ -100,7 +161,7 @@ Main EM Loop:
 
 ## Negative Sentiment Keywords:
 - **worst** - Justification: a serious complaint; strongly negative
-- **boring** - Justification: expresses disengagement; concentrated in negative reviews
+- **bad** - Justification: expresses disengagement; concentrated in negative reviews
 - **waste** - Justification: signals regret ("waste of time"); almost always negative.
 
   
@@ -112,20 +173,6 @@ P(Positive|keyword) = P(keyword|Positive) × P(Positive) / P(keyword)
 - Likelihood: P(keyword|Positive): how often positive reviews use the keyword
 - Marginal: P(keyword): how often the keyword appears overall
 - Posterior: P(Positive|keyword) = Updated probability after seeing keyword
-
-## Results
- 
-| Keyword | Prior | Likelihood | Marginal | Posterior |
-|---------|-------|-----------|----------|-----------|
-| excellent | 0.500 | 0.1147 | 0.0710 | **0.8074** |
-| wonderful | 0.500 | 0.0903 | 0.0556 | **0.8122** |
-| brilliant | 0.500 | 0.0635 | 0.0418 | **0.7601** |
-| waste     | 0.500 | 0.0070 | 0.0507 | **0.0691** |
-| worst     | 0.500 | 0.0164 | 0.0887 | **0.0927** |
-| boring    | 0.500 | 0.0237 | 0.0610 | **0.1940** |
-
-**Interpretation:** positive keywords push the posterior toward ~0.8, negative
-keywords toward ~0.1, both starting from a neutral 0.5 prior. That swing away from 0.5 is Bayesian updating in action.
 
  
 # Implementation Code
@@ -151,6 +198,28 @@ positives
 prior = len(positives) / total
 prior
 ```
+## Word justification:
+```
+from collections import Counter
+
+pos_counts, neg_counts = Counter(), Counter()
+for text, sentiment in zip(df["review"], df["sentiment"]):
+    words = set(text.lower().split())
+    (pos_counts if sentiment == "positive" else neg_counts).update(words)
+
+leans = []
+for w in set(pos_counts) | set(neg_counts):
+    p, n = pos_counts[w], neg_counts[w]
+    if p + n < 1500 or len(w) < 4:      # frequent, real words only
+        continue
+    leans.append((w, p / (p + n)))      # pos_share: 1.0 = very positive, 0.0 = very negative
+
+leans.sort(key=lambda t: t[1], reverse=True)
+print("Most POSITIVE-leaning:", [w for w, _ in leans[:8]])
+print("Most NEGATIVE-leaning:", [w for w, _ in leans[-8:]])
+```
+**Output**:
+<img width="402" height="27" alt="image" src="https://github.com/user-attachments/assets/28496a6b-5c8b-4f83-867d-2c0828e2c42d" />
 
 ## Bayes' Theorem Implementation
 ```
@@ -163,12 +232,21 @@ def bayes(keyword):
 
   return prior, likelihood, marginal, posterior]
 ```
+
+
+**Interpretation:** positive keywords push the posterior toward ~0.8, negative
+keywords toward ~0.1, both starting from a neutral 0.5 prior. That swing away from 0.5 is Bayesian updating in action.
+
 # Probability Results Tables
 ### Positive Keywords Analysis
-<img width="617" height="184" alt="image" src="https://github.com/user-attachments/assets/05aa112e-fad4-43fe-98c5-6fa3f0bbeb54" />
+
+<img width="258" height="114" alt="Screenshot 2026-07-07 125227" src="https://github.com/user-attachments/assets/48edaf9c-ca1f-4abf-8140-bb15d1119863" />
+
 
 ### Negative Keywords Analysis
-<img width="617" height="184" alt="image" src="https://github.com/user-attachments/assets/5bbf74a9-bad5-43dc-88d2-f9631d43a760" />
+
+<img width="255" height="110" alt="Screenshot 2026-07-07 125237" src="https://github.com/user-attachments/assets/7ed352f6-c3b1-4f51-b7ce-a10f5308442c" />
+
 
 
 ##  PART 3 & 4: Gradient Descent
