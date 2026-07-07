@@ -137,6 +137,7 @@ def em(x, mu1, mu2, var1, var2, pi1, pi2, max_iters=500, tol=1e-6, verbose=True)
 params, history, n_iters = em(x, mu1, mu2, var1, var2, pi1, pi2)
 ```
 **Output- Optimization tracking Table**:
+
 <img width="230" height="47" alt="Screenshot 2026-07-07 131948" src="https://github.com/user-attachments/assets/0a100ed9-f6e1-455f-b861-69d69c0c415f" />
 
 # Visualizations
