@@ -243,28 +243,11 @@ iterations = [NUMBER]
 
 
 ## Training Loop
-[INSERT YOUR GRADIENT DESCENT LOOP WITH VISIBLE STEPS]
+<img width="781" height="356" alt="image" src="https://github.com/user-attachments/assets/bf06846c-0fe0-44b6-bac6-d69122b0dbaf" />
 
 ## Sample Output
---- Iteration 1 ---
-Predictions (ŷ):     [values]
-Error (ŷ - y):       [values]
-MSE:                 [value]
-Gradient ∂J/∂m:      [values]
-Gradient ∂J/∂b:      [values]
-Updated m:           [values]
-Updated b:           [values]
+<img width="781" height="379" alt="image" src="https://github.com/user-attachments/assets/30870173-0317-4990-a649-e2ee24e0de33" />
 
---- Iteration 2 ---
-[Continue...]
-
-## Results & Analysis
-## Final Parameters
-Final m = [values]
-Final b = [values]
-Final MSE = [value]
-Final Predictions = [values]
-Actual Values = [5, 6]
 
 Key Observations:
 - MSE consistently decreases with each iteration
