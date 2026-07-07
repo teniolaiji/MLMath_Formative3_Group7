@@ -260,12 +260,12 @@ Key Observations:
 
 ## Visualizations
 ### Parameter Trajectory
-[INSERT YOUR PARAMETER PLOTTING CODE]
-<img width="214" height="116" alt="image" src="https://github.com/user-attachments/assets/5c175864-5eaa-4e7d-876e-1fed135910fa" />
+<img width="544" height="304" alt="image" src="https://github.com/user-attachments/assets/b17dc1e8-4124-4774-b883-d16364b621db" />
+
 
 ## Error Convergence
-[MEMBER 3: INSERT YOUR MSE PLOTTING CODE]
-<img width="214" height="116" alt="image" src="https://github.com/user-attachments/assets/5c175864-5eaa-4e7d-876e-1fed135910fa" />
+<img width="553" height="319" alt="image" src="https://github.com/user-attachments/assets/cbcc654a-d76f-4981-87ce-996fed677365" />
+
 
 ## Repository Structure
 
