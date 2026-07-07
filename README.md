@@ -283,14 +283,11 @@ where ŷ = X·m + b
 ## Derivative with respect to b:
 ∂J/∂b = (2/n) × (ŷ - y)
 Manual Iteration Results:
-[MEMBER 3: INSERT YOUR STEP-BY-STEP CALCULATIONS]
+<img width="200" height="283" alt="image" src="https://github.com/user-attachments/assets/ab137ca7-d33f-4309-af8f-aa7f93eb0468" />
+<img width="199" height="279" alt="image" src="https://github.com/user-attachments/assets/0e20abba-780f-4374-8d11-b6acb23dddcc" />
+<img width="212" height="280" alt="image" src="https://github.com/user-attachments/assets/f58b3090-aed3-4b6f-b48a-7f3ef184e97d" />
 
-ŷ = [values]
-Error = [values]
-∂J/∂m = [values]
-∂J/∂b = [values]
-m_new = [values]
-b_new = [values]
+
 
 
 ##  Part 4: Python Implementation
