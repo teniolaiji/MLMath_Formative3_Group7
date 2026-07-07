@@ -236,12 +236,11 @@ learning_rate = 0.001
 iterations = [NUMBER]
 
 # MSE Equation Function
-[MEMBER 4: INSERT YOUR MSE FUNCTION]
-
-[INSERT YOUR MSE EQUATION CODE]
+<img width="644" height="65" alt="image" src="https://github.com/user-attachments/assets/5fb3765f-a88b-48c6-b6c5-2b64fde95550" />
 
 # Gradient Computation with SciPy
-[INSERT YOUR SCIPY DERIVATIVE CODE]
+<img width="640" height="218" alt="image" src="https://github.com/user-attachments/assets/95014e77-ae63-4b09-98ef-f96eb85d3a91" />
+
 
 ## Training Loop
 [INSERT YOUR GRADIENT DESCENT LOOP WITH VISIBLE STEPS]
