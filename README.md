@@ -373,7 +373,7 @@ cd formative-3
 pip install numpy scipy matplotlib
 
 ### Run notebook
-jupyter notebook Assignment.ipynb
+jupyter notebook Formative3.ipynb
 
 
 
